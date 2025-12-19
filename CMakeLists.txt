@@ -253,7 +253,9 @@ else()
                                       ${PLOTJUGGLER_BASE_MOCS})
 endif()
 
-set(PJ_PLUGIN_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${PJ_PLUGINS_DIRECTORY}")
+if(NOT PJ_PLUGIN_INSTALL_DIRECTORY)
+  set(PJ_PLUGIN_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib/plotjuggler-plugins")
+endif()
 
 target_include_directories(
   plotjuggler_base
