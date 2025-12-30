@@ -24,6 +24,12 @@ make -j$(sysctl -n hw.ncpu)
 echo "==> Installing to $INSTALL_DIR..."
 make install
 
+# Copy PlotCyphal libraries if they exist
+if [ -d "../../PlotCyphal/build" ] && ls ../../PlotCyphal/build/lib* 1> /dev/null 2>&1; then
+    echo "==> Copying PlotCyphal libraries..."
+    cp ../../PlotCyphal/build/lib* install/plotjuggler.app/Contents/MacOS
+fi
+
 # Deploy Qt frameworks
 echo "==> Deploying Qt frameworks with macdeployqt..."
 QT5_PATH=$(brew --prefix qt@5)
