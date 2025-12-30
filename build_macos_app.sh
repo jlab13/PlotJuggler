@@ -14,7 +14,7 @@ cd "$BUILD_DIR"
 
 # Configure with CMake
 echo "==> Configuring with CMake..."
-cmake -DCMAKE_INSTALL_PREFIX="$PWD/install" ..
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PWD/install" ..
 
 # Build
 echo "==> Building..."
@@ -40,7 +40,7 @@ else
 fi
 
 # Code sign the application (ad-hoc signature for local use)
-echo "==> Code signing application..."
+# echo "==> Code signing application..."
 codesign --deep --force --sign - install/plotjuggler.app
 if [ $? -eq 0 ]; then
     echo "==> Code signing successful (ad-hoc signature)"
