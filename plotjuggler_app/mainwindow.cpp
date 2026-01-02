@@ -2902,7 +2902,7 @@ void MainWindow::on_buttonLoadDatafile_clicked()
   loadDialog.setViewMode(QFileDialog::Detail);
   loadDialog.setNameFilter(extensions.join(";;"));
   loadDialog.setDirectory(directory_path);
-  loadDialog.setOption(QFileDialog::DontUseNativeDialog, true);
+  // loadDialog.setOption(QFileDialog::DontUseNativeDialog, true);
 
   QStringList fileNames;
   if (loadDialog.exec())
