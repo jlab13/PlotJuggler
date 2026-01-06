@@ -25,9 +25,14 @@ echo "==> Installing to $INSTALL_DIR..."
 make install
 
 # Copy PlotCyphal libraries if they exist
-if [ -d "../../PlotCyphal/build" ] && ls ../../PlotCyphal/build/lib* 1> /dev/null 2>&1; then
-    echo "==> Copying PlotCyphal libraries..."
-    cp ../../PlotCyphal/build/lib* install/plotjuggler.app/Contents/MacOS
+if [ -n "${PLOT_CYPHAL_DIR:-}" ]; then
+    PLOT_CYPHAL_BUILD_DIR="$PLOT_CYPHAL_DIR/build"
+    if [ -d "$PLOT_CYPHAL_BUILD_DIR" ] && ls "$PLOT_CYPHAL_BUILD_DIR"/libPlotJugglerCyphal* 1> /dev/null 2>&1; then
+        echo "==> Copying PlotCyphal libraries from PLOT_CYPHAL_DIR..."
+        cp "$PLOT_CYPHAL_BUILD_DIR"/lib* install/plotjuggler.app/Contents/MacOS
+    else
+        echo "Warning: PlotCyphal build directory not found or no libraries present in PLOT_CYPHAL_DIR."
+    fi
 fi
 
 # Deploy Qt frameworks
@@ -39,14 +44,6 @@ else
     echo "Warning: macdeployqt not found. Install Qt5 via Homebrew: brew install qt@5"
 fi
 
-# Code sign the application (ad-hoc signature for local use)
-# echo "==> Code signing application..."
-codesign --deep --force --sign - install/plotjuggler.app
-if [ $? -eq 0 ]; then
-    echo "==> Code signing successful (ad-hoc signature)"
-else
-    echo "Warning: Code signing failed. The app may not run on macOS 10.15+"
-fi
 
 echo ""
 echo "==> Build complete!"
@@ -56,8 +53,5 @@ echo ""
 echo "Bundle size:"
 du -sh install/plotjuggler.app
 echo ""
-echo "To create a DMG for distribution, you can use:"
-echo "  brew install create-dmg"
-echo "  create-dmg --volname 'PlotJuggler' --window-pos 200 120 --window-size 800 400 \\"
-echo "    --icon-size 100 --icon 'PlotJuggler.app' 200 190 --hide-extension 'PlotJuggler.app' \\"
-echo "    --app-drop-link 600 185 'PlotJuggler.dmg' install/plotjuggler.app"
+echo "To sign app, run: ./macos_sign.sh"
+echo ""
