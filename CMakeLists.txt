@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
+# macOS deployment target must be set BEFORE project()
+if(APPLE)
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version")
+endif()
+
 project(
   plotjuggler
   LANGUAGES C CXX
@@ -27,9 +32,9 @@ set(PJ_PLUGINS_DIRECTORY "lib/plotjuggler/plugins" CACHE STRING "Plugins directo
 
 if(NOT WIN32 AND ENABLE_ASAN)
   set(CMAKE_CXX_FLAGS
-      "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+    "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
   set(CMAKE_LINKER_FLAGS
-      "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
+    "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
 endif()
 
 if(VCPKG_TOOLCHAIN)
@@ -96,9 +101,9 @@ else()
   message(STATUS "--------------------------------------------------")
 endif()
 
-  if(NOT PJ_INSTALLATION)
-      set(PJ_INSTALLATION "undefined" CACHE STRING "Installation type" FORCE)
-  endif()
+if(NOT PJ_INSTALLATION)
+  set(PJ_INSTALLATION "undefined" CACHE STRING "Installation type" FORCE)
+endif()
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -121,24 +126,24 @@ endif()
 find_package(
   Qt5 REQUIRED
   COMPONENTS Core
-             Widgets
-             PrintSupport
-             Concurrent
-             Xml
-             Svg
-             OpenGL
-             WebSockets
-             Network)
+  Widgets
+  PrintSupport
+  Concurrent
+  Xml
+  Svg
+  OpenGL
+  WebSockets
+  Network)
 
 set(QT_LINK_LIBRARIES
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::PrintSupport
-    Qt5::Xml
-    Qt5::Concurrent
-    Qt5::Svg
-    Qt5::OpenGL
-    Qt5::WebSockets)
+  Qt5::Core
+  Qt5::Widgets
+  Qt5::PrintSupport
+  Qt5::Xml
+  Qt5::Concurrent
+  Qt5::Svg
+  Qt5::OpenGL
+  Qt5::WebSockets)
 
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type selected, default to RelWithDebInfo")
@@ -158,7 +163,6 @@ elseif(APPLE)
 
   # macOS bundle configuration
   set(GUI_TYPE MACOSX_BUNDLE)
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum macOS version")
   set(MACOSX_BUNDLE_ICON_FILE plotjuggler.icns)
   set(MACOSX_BUNDLE_GUI_IDENTIFIER "io.plotjuggler.PlotJuggler")
   set(MACOSX_BUNDLE_BUNDLE_NAME "PlotJuggler")
@@ -226,17 +230,17 @@ endif()
 # ########################  BASE library  ####################################
 
 set(PLOTJUGGLER_BASE_SRC
-    plotjuggler_base/src/plotdata.cpp
-    plotjuggler_base/src/datastreamer_base.cpp
-    plotjuggler_base/src/transform_function.cpp
-    plotjuggler_base/src/plotwidget_base.cpp
-    plotjuggler_base/src/plotzoomer.cpp
-    plotjuggler_base/src/plotmagnifier.cpp
-    plotjuggler_base/src/plotlegend.cpp
-    plotjuggler_base/src/plotpanner.cpp
-    plotjuggler_base/src/timeseries_qwt.cpp
-    plotjuggler_base/src/reactive_function.cpp
-    plotjuggler_base/src/save_plot.cpp)
+  plotjuggler_base/src/plotdata.cpp
+  plotjuggler_base/src/datastreamer_base.cpp
+  plotjuggler_base/src/transform_function.cpp
+  plotjuggler_base/src/plotwidget_base.cpp
+  plotjuggler_base/src/plotzoomer.cpp
+  plotjuggler_base/src/plotmagnifier.cpp
+  plotjuggler_base/src/plotlegend.cpp
+  plotjuggler_base/src/plotpanner.cpp
+  plotjuggler_base/src/timeseries_qwt.cpp
+  plotjuggler_base/src/reactive_function.cpp
+  plotjuggler_base/src/save_plot.cpp)
 
 qt5_wrap_cpp(
   PLOTJUGGLER_BASE_MOCS
@@ -249,10 +253,10 @@ qt5_wrap_cpp(
 
 if(BASE_AS_SHARED)
   add_library(plotjuggler_base SHARED ${PLOTJUGGLER_BASE_SRC}
-                                      ${PLOTJUGGLER_BASE_MOCS})
+    ${PLOTJUGGLER_BASE_MOCS})
 else()
   add_library(plotjuggler_base STATIC ${PLOTJUGGLER_BASE_SRC}
-                                      ${PLOTJUGGLER_BASE_MOCS})
+    ${PLOTJUGGLER_BASE_MOCS})
 endif()
 
 if(NOT PJ_PLUGIN_INSTALL_DIRECTORY)
@@ -262,7 +266,7 @@ endif()
 target_include_directories(
   plotjuggler_base
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/sol2-3.5.0/include>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/sol2-3.5.0/include>)
 
 target_link_libraries(
   plotjuggler_base
@@ -273,30 +277,30 @@ target_link_libraries(
 target_compile_definitions(
   plotjuggler_base
   PUBLIC PJ_MAJOR_VERSION=${PROJECT_VERSION_MAJOR}
-         PJ_MINOR_VERSION=${PROJECT_VERSION_MINOR}
-         PJ_PATCH_VERSION=${PROJECT_VERSION_PATCH}
-         PJ_PLUGIN_INSTALL_DIRECTORY=\"${PJ_PLUGIN_INSTALL_DIRECTORY}\"
-         FMT_HEADER_ONLY
-         $<$<BOOL:${COMPILING_WITH_CATKIN}>:COMPILED_WITH_CATKIN>
-         $<$<BOOL:${COMPILING_WITH_AMENT}>:COMPILED_WITH_AMENT>)
+  PJ_MINOR_VERSION=${PROJECT_VERSION_MINOR}
+  PJ_PATCH_VERSION=${PROJECT_VERSION_PATCH}
+  PJ_PLUGIN_INSTALL_DIRECTORY=\"${PJ_PLUGIN_INSTALL_DIRECTORY}\"
+  FMT_HEADER_ONLY
+  $<$<BOOL:${COMPILING_WITH_CATKIN}>:COMPILED_WITH_CATKIN>
+  $<$<BOOL:${COMPILING_WITH_AMENT}>:COMPILED_WITH_AMENT>)
 
 target_include_directories(
   plotjuggler_base
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/plotjuggler_base/include>
-         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/plotjuggler_base/src>
-         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qwt/src>
-         $<INSTALL_INTERFACE:include>)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/plotjuggler_base/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/qwt/src>
+  $<INSTALL_INTERFACE:include>)
 
 # ########################  INSTALL  ####################################
 
 if(COMPILING_WITH_CATKIN)
 
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
-      ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_LIB_DESTINATION})
+    ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_LIB_DESTINATION})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
-      ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
+    ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
-      ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
+    ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
   set(PJ_PLUGIN_INSTALL_DIRECTORY ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 elseif(COMPILING_WITH_AMENT)
@@ -306,7 +310,7 @@ elseif(COMPILING_WITH_AMENT)
   set(PJ_PLUGIN_INSTALL_DIRECTORY lib/${PROJECT_NAME})
 
   ament_export_targets(${PROJECT_NAME}Targets export_plotjuggler_qwt
-                       HAS_LIBRARY_TARGET)
+    HAS_LIBRARY_TARGET)
   ament_package()
 else()
 
@@ -326,10 +330,10 @@ endif()
 set(DESKTOP_ICON_DIR "${CMAKE_INSTALL_PREFIX}/share/icons")
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/io.plotjuggler.PlotJuggler.desktop
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications")
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications")
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/plotjuggler.svg
-        DESTINATION ${DESKTOP_ICON_DIR})
+  DESTINATION ${DESKTOP_ICON_DIR})
 
 # ######################## Main App, Libraries and Plugins
 # ##############################################################################
@@ -384,7 +388,7 @@ if(NOT COMPILING_WITH_AMENT AND NOT COMPILING_WITH_CATKIN)
   message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-                ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-          DESTINATION ${PJ_CMAKECONFIG_INSTALL_DIR})
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    DESTINATION ${PJ_CMAKECONFIG_INSTALL_DIR})
 
 endif()

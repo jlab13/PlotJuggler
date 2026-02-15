@@ -11,7 +11,7 @@ PlotJuggler has been configured to build as a native macOS application bundle (`
 
 - **Info.plist Template**: [`plotjuggler_app/Info.plist.in`](plotjuggler_app/Info.plist.in)
   - Bundle identifier: `io.plotjuggler.application`
-  - Minimum macOS version: 10.15 (Catalina)
+  - Minimum macOS version: 11.0 (Big Sur)
   - High resolution support enabled
   - Application category: Developer Tools
 
