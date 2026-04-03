@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QPushButton>
 #include <QJsonArray>
 #include <QStringList>
 #include <QTreeWidget>
@@ -47,10 +48,18 @@ public:
   // OK button
   void setOkButton(const QString& text, bool enabled);
 
+  // Parser options
+  unsigned maxArraySize() const;
+  bool clampLargeArrays() const;
+  bool useTimestamp() const;
+
   // Signal access for external connections
   QDialogButtonBox* buttonBox() const;
 
   QTreeWidget* topicsWidget() const;
+
+  QPushButton* connectButton() const;
+  void setConnected(bool connected);
 
 private:
   void applyFilter(const QString& filter);

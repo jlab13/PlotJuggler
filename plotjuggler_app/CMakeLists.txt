@@ -90,16 +90,23 @@ set(PLOTJUGGLER_SRC
     realslider.h
     nlohmann_parsers.cpp)
 
-if(wasmtime_FOUND)
+if(wasmer_FOUND)
   list(APPEND PLOTJUGGLER_SRC wasm_runtime.cpp wasm_parser.cpp)
 endif()
 
 add_executable(plotjuggler ${GUI_TYPE} ${PLOTJUGGLER_SRC} ${RES_SRC} ${UI_SRC}
                            ${BACKWARD_ENABLE})
 
-if(wasmtime_FOUND)
-  target_link_libraries(plotjuggler PRIVATE wasmtime::wasmtime)
+if(wasmer_FOUND)
+  target_link_libraries(plotjuggler PRIVATE wasmer::wasmer)
   target_compile_definitions(plotjuggler PRIVATE WASM_RUNTIME_ENABLED)
+  if(WIN32 AND NOT MINGW)
+    add_custom_command(TARGET plotjuggler POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:wasmer::wasmer>"
+        "$<TARGET_FILE_DIR:plotjuggler>"
+      COMMENT "Copying wasmer.dll to output directory")
+  endif()
 endif()
 
 if(NOT WIN32)
